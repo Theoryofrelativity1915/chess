@@ -1,8 +1,8 @@
 # Contains all of the classes of the different pieces
 
 class Pawn:
-    def __init__(self):
-        self.pos = (1, 1)
+    def __init__(self, row, col):
+        self.pos = (row, col)
     
     def move(self):
         pass
