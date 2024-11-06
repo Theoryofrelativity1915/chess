@@ -3,7 +3,7 @@
 class Pawn:
     def __init__(self, row, col):
         self.pos = (row, col)
-    
+
     def move(self):
         pass
 
