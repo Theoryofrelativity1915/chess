@@ -1,6 +1,8 @@
 # Contains the main game loop
 import pygame as py
 from board import Board
+from constants import WHITE
+from pieces import Pawn
 
 
 # py setup
@@ -9,6 +11,8 @@ board = Board()
 clock = py.time.Clock()
 running = True
 
+example_pawn = Pawn(0, 0, WHITE)
+
 while running:
     # poll for events
     # py.QUIT event means the user clicked X to close your window
@@ -16,11 +20,8 @@ while running:
         if event.type == py.QUIT:
             running = False
 
-    # fill the screen with a color to wipe away anything from last frame
-
     board.render()
-
-    # RENDER YOUR GAME HERE
+    example_pawn.render(board.canvas)
 
     # flip() the display to put your work on screen
     py.display.flip()
