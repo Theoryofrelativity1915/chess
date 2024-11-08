@@ -11,7 +11,6 @@ board = Board()
 clock = py.time.Clock()
 running = True
 
-example_pawn = Pawn(0, 0, WHITE)
 
 while running:
     # poll for events
@@ -21,7 +20,6 @@ while running:
             running = False
 
     board.render()
-    example_pawn.render()
 
     # flip() the display to put your work on screen
     py.display.flip()

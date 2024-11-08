@@ -11,11 +11,12 @@ class Pawn:
         self.row = row
         self.col = col
         self.color = color
+        self.canvas = canvas
         # Pygame starts drawing from the top left, so each piece needs its own
         # offset to be in the center of the square.
         self.render_offset = 18
-        self.pos = (row * SQUARE_SIZE + self.render_offset,
-                    col * SQUARE_SIZE + self.render_offset * 2)
+        self.pos = (col * SQUARE_SIZE + self.render_offset,
+                    row * SQUARE_SIZE + self.render_offset * 2)
         if (self.color == WHITE):
             self.image = white_pawn_image
         else:

@@ -9,12 +9,15 @@ class Board:
         self.rows = ROWS
         self.cols = COLS
         self.canvas = py.display.set_mode((BOARD_WIDTH, BOARD_HEIGHT))
+        # self.board = self.init_board_and_pieces()
         self.board = self.init_board_and_pieces()
+        self.render_pieces()
 
     def render(self):
         self.canvas.fill(MINT)
         self.draw_squares()
         self.draw_board_outline()
+        self.render_pieces()
 
     def draw_board_outline(self):
         py.draw.rect(self.canvas, BLACK,
@@ -50,7 +53,7 @@ class Board:
                     case 7:
                         new_piece = self.determine_piece_by_col(i, j)
                 board[i][j] = new_piece
-                new_piece.render()
+        return board
 
     # Given a row and column, return the correct piece.
     def determine_piece_by_col(self, i, j):
@@ -74,3 +77,10 @@ class Board:
         else:
             # return King(self.canvas, i, j, color)
             pass
+
+    def render_pieces(self):
+        for i in range(8):
+            for j in range(8):
+                # TODO: Remove this later when all of the pieces are actually being returned.
+                if i == 1 or i == 6:
+                    self.board[i][j].render()
