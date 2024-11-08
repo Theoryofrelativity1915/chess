@@ -7,7 +7,7 @@ black_pawn_image = py.image.load(os.path.join('./assets', 'black_pawn.png'))
 
 
 class Pawn:
-    def __init__(self, row, col, color):
+    def __init__(self, canvas, row, col, color):
         self.row = row
         self.col = col
         self.color = color
@@ -27,5 +27,5 @@ class Pawn:
     def delete(self):
         pass
 
-    def render(self, board):
-        board.blit(self.image, self.pos)
+    def render(self):
+        self.canvas.blit(self.image, self.pos)
