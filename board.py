@@ -84,3 +84,9 @@ class Board:
                 # TODO: Remove this later when all of the pieces are actually being returned.
                 if i == 1 or i == 6:
                     self.board[i][j].render()
+
+    def get_piece(self, row, col):
+        if (row > 7 or col > 7):
+            raise Exception(
+                "Uh-oh! Looks like the row or column was greater than 7. Please ensure that the row and column are less than 8.")
+        return self.board[row][col]
