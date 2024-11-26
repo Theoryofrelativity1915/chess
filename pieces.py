@@ -22,8 +22,19 @@ class Pawn:
         else:
             self.image = black_pawn_image
 
-    def move(self):
-        pass
+    def select(self): #Highlights possible moves
+        py.draw.rect(self.canvas, BLUE, self.col + 1)
+        py.draw.rect(self.canvas, BLUE, self.col + 2)
+
+    def move(self, row, col): #Moves pawn to designated square if possible
+        if self.row == 7:
+            if row == self.row + 1 or row == self.row + 2:
+                self.row = row
+                self.col = col
+        else:
+            if row == self.row:
+                self.row = row
+                self.col = col
 
     def delete(self):
         pass
