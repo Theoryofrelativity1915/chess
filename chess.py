@@ -18,6 +18,9 @@ while running:
     for event in py.event.get():
         if event.type == py.QUIT:
             running = False
+        elif event.type == py.MOUSEBUTTONDOWN:
+            x, y = py.mouse.get_pos()
+            currentPiece = board.getpiece(x, y)
 
     board.render()
 
