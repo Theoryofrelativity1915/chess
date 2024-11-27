@@ -1,8 +1,6 @@
 # Contains the main game loop
 import pygame as py
 from board import Board
-from constants import WHITE
-from pieces import Pawn
 
 
 # py setup
