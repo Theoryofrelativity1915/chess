@@ -1,6 +1,11 @@
 # Contains the entire board class
 import pygame as py
 from pieces import Pawn
+from pieces import Rook
+from pieces import Knight
+from pieces import Bishop
+from pieces import Queen
+from pieces import King
 from constants import BOARD_HEIGHT, BOARD_WIDTH, ROWS, COLS, WHITE, BLACK, MINT, GREEN, SQUARE_SIZE
 
 
@@ -63,27 +68,25 @@ class Board:
             color = WHITE
         # Select correct black piece
         if j == 0 or j == 7:
-            # return Rook(self.canvas, i, j, color)
+            return Rook(self.canvas, i, j, color)
             pass
         elif j == 1 or j == 6:
-            # return Knight(self.canvas, i, j, color)
+            return Knight(self.canvas, i, j, color)
             pass
         elif j == 2 or j == 5:
-            # return Bishop(self.canvas, i, j, color)
+            return Bishop(self.canvas, i, j, color)
             pass
         elif j == 3:
-            # return Queen(self.canvas, i, j, color)
+            return Queen(self.canvas, i, j, color)
             pass
         else:
-            # return King(self.canvas, i, j, color)
+            return King(self.canvas, i, j, color)
             pass
 
     def render_pieces(self):
         for i in range(8):
             for j in range(8):
-                # TODO: Remove this later when all of the pieces are actually being returned.
-                if i == 1 or i == 6:
-                    self.board[i][j].render()
+                self.board[i][j].render()
 
     def get_piece(self, row, col):
         if (row > 7 or col > 7):
