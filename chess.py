@@ -18,6 +18,19 @@ while running:
     for event in py.event.get():
         if event.type == py.QUIT:
             running = False
+        elif event.type == py.MOUSEBUTTONDOWN:
+            x, y = py.mouse.get_pos()
+            col = int(x/ 100)
+            row = int(y / 100)
+            print(row, col)
+            if currentPiece != None: #There is already a piece selected
+                currentPiece.move(row, col)
+                currentPiece = None
+            else: #No piece selected, selecting piece
+                currentPiece = board.get_piece(row, col)
+                if currentPiece != None:
+                    print("Piece!")
+                    currentPiece.select()
 
     board.render()
 
