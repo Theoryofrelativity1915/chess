@@ -1,11 +1,6 @@
 # Contains the entire board class
 import pygame as py
-import pieces.pieces.Pawn
-import pieces.Rook
-import pieces.Knight
-import pieces.Bishop
-import pieces.Queen
-import pieces.King
+import pieces
 from constants import BOARD_HEIGHT, BOARD_WIDTH, ROWS, COLS, WHITE, BLACK, MINT, GREEN, SQUARE_SIZE
 
 
@@ -26,8 +21,8 @@ class Board:
         #         self.removed_white_pieces[i][j] = pieces.Pawn(
         #             self.canvas, 0, 0, WHITE)
         #         self.removed_black_pieces[i][j] = pieces.Pawn( self.canvas, 0, 0, BLACK)
-        piece = pieces.pieces.Pawn(self.canvas, 0, 0, BLACK)
-        self.remove_piece_to_side_of_board(piece=piece)
+        piece = pieces.Pawn(self.canvas, 0, 0, BLACK)
+        # self.remove_piece_to_side_of_board(piece=piece)
 
     def render(self):
         self.canvas.fill(MINT)
