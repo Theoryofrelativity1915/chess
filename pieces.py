@@ -41,8 +41,8 @@ class Piece:
         self.canvas = canvas
         self.image = image
         self.render_offset = 18
-        self.pos = (col * SQUARE_SIZE + self.render_offset,
-                    row * SQUARE_SIZE + self.render_offset * 2)
+        self.pos = (self.col * SQUARE_SIZE + self.render_offset,
+                    self.row * SQUARE_SIZE + self.render_offset * 2)
 
 
 class Pawn(Piece):
@@ -88,21 +88,26 @@ class Pawn(Piece):
         return False
 
     def move(self, row, col, bd):  # Moves piece to designated square if possible
+        if (row > 7 or row < 0 or col > 7 or col < 0) or (self.row == row and self.col == col):
+            return
         selected_row_valid = False
         selected_col_valid = False
         opponent = bd.get_piece(row, col)
+        if opponent is not None and opponent.color == self.color:
+            opponent = None #Can't kill a teammate
         if self.is_valid_row_for_pawn(row, col, opponent):
             selected_row_valid = True
-        if (col == self.col or col == self.col + 1 and opponent is not None):
+        if (col == self.col or abs(self.col - col) == 1 and opponent is not None):
             selected_col_valid = True
+        print(selected_row_valid, selected_col_valid)
         # If both the row they want to go and the col they want to go is valid, then let them and kill whatever is there.
         if selected_col_valid and selected_row_valid:
             bd.board[row][col] = self
-            print(bd.board[row][col])
             bd.board[self.row][self.col] = None
-            print(bd.board[self.row][self.col])
             self.row = row
             self.col = col
+            self.pos = (self.col * SQUARE_SIZE + self.render_offset,
+                        self.row * SQUARE_SIZE + self.render_offset * 2)
             if opponent is not None:
                 opponent.delete()
 
