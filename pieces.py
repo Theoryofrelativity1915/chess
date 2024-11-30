@@ -218,6 +218,8 @@ class Knight(Piece):
         super().__init__(canvas, row, col, color, image)
 
     def is_valid_move_for_knight(self, row, col):
+        row += 1
+        col += 1
         if ((abs(row - (self.row + 1))) + (abs(col - (self.col + 1))) == 3 and (row != 0 and col != 0)):
             print("Valid move for knight")
             return True
