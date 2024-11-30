@@ -24,9 +24,7 @@ def wait_and_move_piece(current_piece):
                 exit(1)
             elif event.type == py.MOUSEBUTTONDOWN:
                 [row, col] = get_user_input()
-                print(current_piece.col, current_piece.row)
                 current_piece.move(row, col, board)
-                print(current_piece.col, current_piece.row)
                 return None
 
 
@@ -39,14 +37,13 @@ while running:
             running = False
         elif event.type == py.MOUSEBUTTONDOWN:
             [row, col] = get_user_input()
-            current_piece = board.get_piece(row, col)
+            if 0 <= row <= 7 and 0 <= col <= 7:
+                current_piece = board.get_piece(row, col)
             if current_piece is not None:
-                print("Piece selected!")
+                # print("Piece selected!")
                 current_piece.select()
-                board.print_board()
+                # board.print_board()
                 current_piece = wait_and_move_piece(current_piece)
-                board.print_board()
-                board.render()
     board.render()
     # flip() the display to put your work on screen
     py.display.flip()
