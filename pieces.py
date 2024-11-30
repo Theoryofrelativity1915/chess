@@ -119,7 +119,6 @@ class Pawn(Piece):
 
 
 class Rook(Piece):
-    # self.moves[40]  # List to save current possible moves
 
     def __init__(self, canvas, row, col, color):
         if (color == WHITE):
@@ -128,49 +127,49 @@ class Rook(Piece):
             image = black_rook_image
         super().__init__(canvas, row, col, color, image)
 
-    def select(self):  # Highlights possible moves
-        row = self.row
-        col = self.col
-        i = 0
-        self.moves.clear()
-        while row < 7:
-            self.moves[i] = py.draw.rect(self.canvas, BLUE, ((row + 1) * SQUARE_SIZE,
-                                                             col * SQUARE_SIZE, SQUARE_SIZE,
-                                                             SQUARE_SIZE))
-            row += 1
-            i += 1
-        while col < 7:
-            self.moves[i] = py.draw.rect(self.canvas, BLUE, (row * SQUARE_SIZE,
-                                                             (col + 1) *
-                                                             SQUARE_SIZE, SQUARE_SIZE,
-                                                             SQUARE_SIZE))
-            col += 1
-            i += 1
-        row = self.row
-        col = self.col
-        while row > -1:
-            self.moves[i] = py.draw.rect(self.canvas, BLUE, ((row - 1) * SQUARE_SIZE,
-                                                             col * SQUARE_SIZE, SQUARE_SIZE,
-                                                             SQUARE_SIZE))
-            row -= 1
-            i += 1
-        while col > -1:
-            self.moves[i] = py.draw.rect(self.canvas, BLUE, (row * SQUARE_SIZE,
-                                                             (col - 1) *
-                                                             SQUARE_SIZE, SQUARE_SIZE,
-                                                             SQUARE_SIZE))
-            col -= 1
-            i += 1
+    def is_valid_row_for_rook(self, row, col):
+        if self.row == row ^ self.col == col:
+            return True            
+        return False
 
-    def move(self, row, col):  # Moves piece to designated square if possible
-        for x in self.moves:
-            if self.moves[x].collidepoint(row, col):
-                opponent = board.Board.get_piece(row, col)
-                if opponent != None:
-                    opponent.delete()
+    def move(self, row, col, bd):  # Moves piece to designated square if possible
+        print("Rook selected")
+        opponent = None
+        if self.is_valid_row_for_rook(row, col):
+            if self.row is not row:
+                print("Rook moving up/down")
+                count = self.row
+                while count <= row:
+                    opponent = bd.get_piece(count, col)
+                    if opponent is not None:
+                        break
+                    count += 1
+            else:
+                print("Rook moving left/right")
+                count = self.col
+                while count <= col:
+                    opponent = bd.get_piece(row, count)
+                    if opponent is not None:
+                        break
+                    count += 1
+            if opponent is not None:
+                print("Rook taking opponent")
+                bd.board[opponent.row][opponent.col] = self
+                #print(bd.board[row][col])
+                bd.board[self.row][self.col] = None
+                #print(bd.board[self.row][self.col])
+                self.row = opponent.row
+                self.col = opponent.col
+                opponent.delete()
+            else:
+                bd.board[row][col] = self
+                #print(bd.board[row][col])
+                bd.board[self.row][self.col] = None
+                #print(bd.board[self.row][self.col])
                 self.row = row
                 self.col = col
-                break
+                
+                
 
     def delete(self):
         pass
@@ -180,7 +179,6 @@ class Rook(Piece):
 
     def name(self):
         print("Rook")
-
 
 class Knight(Piece):
     def __init__(self, canvas, row, col, color):
