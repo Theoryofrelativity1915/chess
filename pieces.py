@@ -43,6 +43,7 @@ class Piece:
         self.render_offset = 18
         self.pos = (self.col * SQUARE_SIZE + self.render_offset,
                     self.row * SQUARE_SIZE + self.render_offset * 2)
+        self.check_positions = set()
 
 
 class Pawn(Piece):
@@ -99,20 +100,24 @@ class Pawn(Piece):
             selected_row_valid = True
         if (col == self.col or abs(self.col - col) == 1 and opponent is not None):
             selected_col_valid = True
-        print(selected_row_valid, selected_col_valid)
         # If both the row they want to go and the col they want to go is valid, then let them and kill whatever is there.
         if selected_col_valid and selected_row_valid:
+            self.check_positions.clear()
             bd.board[row][col] = self
             bd.board[self.row][self.col] = None
             self.row = row
             self.col = col
+            self.add_pawn_check_positions()
             self.pos = (self.col * SQUARE_SIZE + self.render_offset,
                         self.row * SQUARE_SIZE + self.render_offset * 2)
-            if opponent is not None:
-                opponent.delete()
 
-    def delete(self):
-        pass
+    def add_pawn_check_positions(self):
+        if self.color == WHITE:
+            self.check_positions.add((self.row - 1, self.col + 1))
+            self.check_positions.add((self.row - 1, self.col - 1))
+        else:
+            self.check_positions.add((self.row + 1, self.col + 1))
+            self.check_positions.add((self.row + 1, self.col - 1))
 
     # Pygame starts drawing from the top left, so each piece needs its own
     # offset to be in the center of the square.
@@ -227,21 +232,17 @@ class Knight(Piece):
             return False
 
     def move(self, row, col, bd):
-        print("Knight selected")
         opponent = None
         if self.is_valid_move_for_knight(row, col):
             opponent = bd.get_piece(row, col)
             if opponent is not None:
                 if opponent.color is not self.color:
                     bd.board[row][col] = self
-                    # print(bd.board[row][col])
                     bd.board[self.row][self.col] = None
-                    # print(bd.board[self.row][self.col])
                     self.row = row
                     self.col = col
                     self.pos = (self.col * SQUARE_SIZE + self.render_offset,
                                 self.row * SQUARE_SIZE + self.render_offset * 2)
-                    print("Knight takes opponent")
                     opponent.delete()
             else:
                 bd.board[row][col] = self
@@ -252,6 +253,17 @@ class Knight(Piece):
                 self.col = col
                 self.pos = (self.col * SQUARE_SIZE + self.render_offset,
                             self.row * SQUARE_SIZE + self.render_offset * 2)
+            self.add_knight_check_positions(bd)
+
+    def add_knight_check_positions(self, board):
+        self.check_positions.add((self.row - 2, self.col - 1))
+        self.check_positions.add((self.row - 2, self.col + 1))
+        self.check_positions.add((self.row + 2, self.col - 1))
+        self.check_positions.add((self.row + 2, self.col + 1))
+        self.check_positions.add((self.row - 1, self.col - 2))
+        self.check_positions.add((self.row - 1, self.col + 2))
+        self.check_positions.add((self.row + 1, self.col - 2))
+        self.check_positions.add((self.row + 1, self.col + 2))
 
     def delete(self):
         pass
@@ -279,45 +291,50 @@ class Bishop(Piece):
         else:
             return True
 
-    def iterate_all_diagonal_directions(self, row, col, row_iterator, col_iterator, board):
+    def iterate_all_diagonal_directions(self, valid_positions, row, col, row_iterator, col_iterator, board):
         row += row_iterator
         col += col_iterator
         while self.check_bounds(row, col):
             piece = board.get_piece(row, col)
             if piece is None:
-                self.moves.add((row, col))
+                valid_positions.add((row, col))
                 row += row_iterator
                 col += col_iterator
             elif piece.color == self.color:
                 return
             else:
-                self.moves.add((row, col))
+                valid_positions.add((row, col))
                 return
 
-    def get_moves(self, board):
+    def get_moves(self, board, positions):
         row, col = self.row, self.col
         self.iterate_all_diagonal_directions(
-            row, col, -1, -1, board)  # up and left
+            positions, row, col, -1, -1, board)  # up and left
         self.iterate_all_diagonal_directions(
-            row, col, -1, +1, board)  # up and right
+            positions, row, col, -1, +1, board)  # up and right
         self.iterate_all_diagonal_directions(
-            row, col, +1, +1, board)  # down and right
+            positions, row, col, +1, +1, board)  # down and right
         self.iterate_all_diagonal_directions(
-            row, col, +1, -1, board)  # down and left
+            positions, row, col, +1, -1, board)  # down and left
 
     def move(self, row, col, board):  # Moves piece to designated square if possible
         if (self.row == row and self.col == col):
             return
         self.visited.clear()
         self.moves.clear()
-        self.get_moves(board)
+        self.get_moves(board, self.moves)
         if (row, col) in self.moves:
+            self.check_positions.clear()
+            self.add_bishop_check_positions(board)
             board.board[row][col] = self
             board.board[self.row][self.col] = None
             self.row = row
             self.col = col
             self.pos = (self.col * SQUARE_SIZE + self.render_offset,
                         self.row * SQUARE_SIZE + self.render_offset * 2)
+
+    def add_bishop_check_positions(self, board):
+        self.get_moves(board, self.check_positions)
 
     def render(self):
         self.canvas.blit(self.image, self.pos)
