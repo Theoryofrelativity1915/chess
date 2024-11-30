@@ -49,6 +49,16 @@ class Board:
                                                   j * SQUARE_SIZE, SQUARE_SIZE,
                                                   SQUARE_SIZE))
 
+    def invalid_king_move(self, row, col, color_of_king):
+        for r in range(8):
+            for c in range(8):
+                piece = self.get_piece(r, c)
+                if piece is not None:
+                    if ((row, col) in piece.check_positions 
+                        and piece.color != color_of_king):
+                        return True
+        return False
+
     def init_board_and_pieces(self):
         board = [[None for _ in range(8)] for _ in range(8)]
         for row in range(8):
