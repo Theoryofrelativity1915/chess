@@ -127,7 +127,7 @@ class Rook(Piece):
             image = black_rook_image
         super().__init__(canvas, row, col, color, image)
 
-    def is_valid_row_for_rook(self, row, col):
+    def is_valid_move_for_rook(self, row, col):
         if self.row == row ^ self.col == col:
             return True            
         return False
@@ -135,7 +135,7 @@ class Rook(Piece):
     def move(self, row, col, bd):  # Moves piece to designated square if possible
         print("Rook selected")
         opponent = None
-        if self.is_valid_row_for_rook(row, col):
+        if self.is_valid_move_for_rook(row, col):
             if self.row is not row:
                 print("Rook moving up/down")
                 count = self.row
@@ -153,14 +153,30 @@ class Rook(Piece):
                         break
                     count += 1
             if opponent is not None:
-                print("Rook taking opponent")
-                bd.board[opponent.row][opponent.col] = self
-                #print(bd.board[row][col])
-                bd.board[self.row][self.col] = None
-                #print(bd.board[self.row][self.col])
-                self.row = opponent.row
-                self.col = opponent.col
-                opponent.delete()
+                if self.color is not opponent.color:
+                    print("Rook taking opponent")
+                    bd.board[opponent.row][opponent.col] = self
+                    #print(bd.board[row][col])
+                    bd.board[self.row][self.col] = None
+                    #print(bd.board[self.row][self.col])
+                    self.row = opponent.row
+                    self.col = opponent.col
+                    opponent.delete()
+                else: #If opponent is same team
+                    if self.row is not row:
+                        bd.board[opponent.row - 1][opponent.col] = self
+                        #print(bd.board[row][col])
+                        bd.board[self.row][self.col] = None
+                        #print(bd.board[self.row][self.col])
+                        self.row = opponent.row - 1
+                        self.col = opponent.col
+                    else:
+                        bd.board[opponent.row][opponent.col - 1] = self
+                        #print(bd.board[row][col])
+                        bd.board[self.row][self.col] = None
+                        #print(bd.board[self.row][self.col])
+                        self.row = opponent.row
+                        self.col = opponent.col - 1
             else:
                 bd.board[row][col] = self
                 #print(bd.board[row][col])
@@ -187,9 +203,28 @@ class Knight(Piece):
         else:
             image = black_knight_image
         super().__init__(canvas, row, col, color, image)
-
-    def move(self):
-        pass
+        
+    def is_valid_move_for_knight(self, row, col):
+        if ((abs(row) - abs(self.row) + abs(col) - abs(self.col)) == 3 and (row and col > 0)):
+            print("Valid move for knight")
+            return True
+        else:
+            return False
+    
+    def move(self, row, col, bd):
+        opponent = None
+        if self.is_valid_move_for_knight(row, col):
+            opponent = bd.get_piece(row, col)
+            bd.board[row][col] = self
+            #print(bd.board[row][col])
+            bd.board[self.row][self.col] = None
+            #print(bd.board[self.row][self.col])
+            self.row = row
+            self.col = col
+            if opponent is not None:
+                print("Knight takes opponent")
+                opponent.delete()
+                
 
     def delete(self):
         pass
@@ -207,44 +242,7 @@ class Bishop(Piece):
         super().__init__(canvas, row, col, color, image)
 
     def select(self):  # Highlights possible moves
-        i = 0
-        self.moves.clear()
-        row = self.row
-        col = self.col
-        while row and col < 7:
-            self.moves[i] = py.draw.rect(self.canvas, BLUE, ((row + 1) * SQUARE_SIZE,
-                                                             (col + 1) *
-                                                             SQUARE_SIZE, SQUARE_SIZE,
-                                                             SQUARE_SIZE))
-            row += 1
-            row += 1
-            i += 1
-        while row > -1 and col < 7:
-            self.moves[i] = py.draw.rect(self.canvas, BLUE, ((row - 1) * SQUARE_SIZE,
-                                                             (col + 1) *
-                                                             SQUARE_SIZE, SQUARE_SIZE,
-                                                             SQUARE_SIZE))
-            row -= 1
-            col += 1
-            i += 1
-        row = self.row
-        col = self.col
-        while row < 7 and col > -1:
-            self.moves[i] = py.draw.rect(self.canvas, BLUE, ((row + 1) * SQUARE_SIZE,
-                                                             (col - 1) *
-                                                             SQUARE_SIZE, SQUARE_SIZE,
-                                                             SQUARE_SIZE))
-            row += 1
-            col -= 1
-            i += 1
-        while row and col > -1:
-            py.draw.rect(self.canvas, BLUE, ((row - 1) * SQUARE_SIZE,
-                                             (col - 1) *
-                                             SQUARE_SIZE, SQUARE_SIZE,
-                                             SQUARE_SIZE))
-            row -= 1
-            col -= 1
-            i += 1
+        pass
 
     def move(self, row, col):  # Moves piece to designated square if possible
         for x in self.moves:
