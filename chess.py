@@ -20,6 +20,7 @@ while running:
             x, y = py.mouse.get_pos()
             col = int(x/ 100)
             row = int(y / 100)
+            print(board.board[row][col].name())
             print(row, col)
             if currentPiece != None: #There is already a piece selected
                 currentPiece.move(row, col)
