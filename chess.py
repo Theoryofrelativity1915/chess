@@ -41,7 +41,7 @@ while running:
                 current_piece = board.get_piece(row, col)
             if current_piece is not None:
                 # print("Piece selected!")
-                current_piece.select()
+                # current_piece.select()
                 # board.print_board()
                 current_piece = wait_and_move_piece(current_piece)
     board.render()
