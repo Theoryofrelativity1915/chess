@@ -1,7 +1,7 @@
 # Contains all of the classes of the different pieces
 import pygame as py
 import os
-from constants import SQUARE_SIZE, WHITE, BLUE
+from constants import SQUARE_SIZE, WHITE, BLUE, BLACK
 import board
 
 # Pawn
@@ -64,22 +64,47 @@ class Pawn(Piece):
                                          SQUARE_SIZE, SQUARE_SIZE,
                                          SQUARE_SIZE))
 
+    def is_valid_row_for_pawn(self, row, col, opponent):
+        if ((col == self.col
+             and opponent is None
+             and self.color == BLACK
+             and self.row == 1
+             and abs(row - self.row) <= 2)):
+            return True
+        elif ((col == self.col
+               and opponent is None
+               and self.color == WHITE
+               and self.row == 6
+               and abs(row - self.row) <= 2)):
+            return True
+        elif (col == self.col
+              and opponent is None
+              and abs(self.row - row) == 1):
+            return True
+        elif (abs(col - self.col) == 1
+              and opponent is not None
+              and abs(self.row - row) == 1):
+            return True
+        return False
+
     def move(self, row, col, bd):  # Moves piece to designated square if possible
-        opponent = None
-        if self.row == 7 or 1:  # Checks if pawn is in starting position
-            if row == self.row + 1 or self.row + 2:
-                opponent = board.Board.get_piece(bd, row, col)
-                if opponent != None:
-                    opponent.delete()
-                self.row = row
-                self.col = col
-        else:
-            if row == self.row + 1:
-                opponent = board.Board.get_piece(row, col)
-                if opponent != None:
-                    opponent.delete()
-                self.row = row
-                self.col = col
+        selected_row_valid = False
+        selected_col_valid = False
+        opponent = bd.get_piece(row, col)
+        if self.is_valid_row_for_pawn(row, col, opponent):
+            selected_row_valid = True
+        if (col == self.col or col == self.col + 1 and opponent is not None):
+            selected_col_valid = True
+        # If both the row they want to go and the col they want to go is valid, then let them and kill whatever is there.
+        if selected_col_valid and selected_row_valid:
+            bd.board[row][col] = self
+            print(bd.board[row][col])
+            bd.board[self.row][self.col] = None
+            print(bd.board[self.row][self.col])
+            self.row = row
+            self.col = col
+            if opponent is not None:
+                opponent.delete()
 
     def delete(self):
         pass
@@ -88,7 +113,7 @@ class Pawn(Piece):
     # offset to be in the center of the square.
     def render(self):
         self.canvas.blit(self.image, self.pos)
-        
+
     def name(self):
         print("Pawn")
 
@@ -152,7 +177,7 @@ class Rook(Piece):
 
     def render(self):
         self.canvas.blit(self.image, self.pos)
-        
+
     def name(self):
         print("Rook")
 
@@ -238,7 +263,7 @@ class Bishop(Piece):
 
     def render(self):
         self.canvas.blit(self.image, self.pos)
-        
+
     def name(self):
         print("Knight")
 
@@ -259,7 +284,7 @@ class Queen(Piece):
 
     def render(self):
         self.canvas.blit(self.image, self.pos)
-        
+
     def name(self):
         print("Queen")
 
@@ -280,6 +305,6 @@ class King(Piece):
 
     def render(self):
         self.canvas.blit(self.image, self.pos)
-        
+
     def name(self):
         print("King")

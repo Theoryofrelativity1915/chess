@@ -21,7 +21,6 @@ class Board:
         #         self.removed_white_pieces[i][j] = pieces.Pawn(
         #             self.canvas, 0, 0, WHITE)
         #         self.removed_black_pieces[i][j] = pieces.Pawn( self.canvas, 0, 0, BLACK)
-        piece = pieces.Pawn(self.canvas, 0, 0, BLACK)
         # self.remove_piece_to_side_of_board(piece=piece)
 
     def render(self):
@@ -64,6 +63,8 @@ class Board:
                         new_piece = pieces.Pawn(self.canvas, row, col, WHITE)
                     case 7:
                         new_piece = self.init_piece_by_pos(row, col)
+                    case _:
+                        new_piece = None
                 board[row][col] = new_piece
         return board
 
@@ -88,7 +89,9 @@ class Board:
     def render_pieces(self):
         for i in range(8):
             for j in range(8):
-                self.board[i][j].render()
+                piece = self.board[i][j]
+                if piece is not None:
+                    piece.render()
 
     def render_removed_pieces(self):
         white_row_offset = 400
@@ -128,3 +131,8 @@ class Board:
             for col in range(len(removed_pieces[0])):
                 if removed_pieces[row][col] is not None:
                     removed_pieces[row][col] = piece
+
+    def print_board(self):
+        for i in range(len(self.board)):
+            for j in range(len(self.board[0])):
+                print(f'Row: {i}\tCol: {j}\tPiece: {self.board[i][j]}')
