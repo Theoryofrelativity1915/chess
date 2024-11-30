@@ -210,6 +210,7 @@ class Rook(Piece):
     def name(self):
         print("Rook")
 
+
 class Knight(Piece):
     def __init__(self, canvas, row, col, color):
         if (color == WHITE):
@@ -219,25 +220,39 @@ class Knight(Piece):
         super().__init__(canvas, row, col, color, image)
         
     def is_valid_move_for_knight(self, row, col):
-        if ((abs(row) - abs(self.row) + abs(col) - abs(self.col)) == 3 and (row and col > 0)):
+        if ( (abs( row - self.row ) ) + ( abs( col - self.col ) ) == 3
+                                                and (row != 0 and col != 0)):
             print("Valid move for knight")
             return True
         else:
             return False
     
     def move(self, row, col, bd):
+        print("Knight selected")
         opponent = None
         if self.is_valid_move_for_knight(row, col):
             opponent = bd.get_piece(row, col)
-            bd.board[row][col] = self
-            #print(bd.board[row][col])
-            bd.board[self.row][self.col] = None
-            #print(bd.board[self.row][self.col])
-            self.row = row
-            self.col = col
             if opponent is not None:
-                print("Knight takes opponent")
-                opponent.delete()
+                if opponent.color is not self.color:
+                    bd.board[row][col] = self
+                    #print(bd.board[row][col])
+                    bd.board[self.row][self.col] = None
+                    #print(bd.board[self.row][self.col])
+                    self.row = row
+                    self.col = col
+                    self.pos = (self.col * SQUARE_SIZE + self.render_offset,
+                                self.row * SQUARE_SIZE + self.render_offset * 2)
+                    print("Knight takes opponent")
+                    opponent.delete()
+            else:
+                bd.board[row][col] = self
+                #print(bd.board[row][col])
+                bd.board[self.row][self.col] = None
+                #print(bd.board[self.row][self.col])
+                self.row = row
+                self.col = col
+                self.pos = (self.col * SQUARE_SIZE + self.render_offset,
+                            self.row * SQUARE_SIZE + self.render_offset * 2)
                 
 
     def delete(self):
