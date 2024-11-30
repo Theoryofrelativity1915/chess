@@ -13,23 +13,25 @@ running = True
 while running:
     # poll for events
     # py.QUIT event means the user clicked X to close your window
+    current_piece = None
     for event in py.event.get():
         if event.type == py.QUIT:
             running = False
         elif event.type == py.MOUSEBUTTONDOWN:
             x, y = py.mouse.get_pos()
-            col = int(x/ 100)
+            col = int(x / 100)
             row = int(y / 100)
-            print(board.board[row][col].name())
-            print(row, col)
-            if currentPiece != None: #There is already a piece selected
-                currentPiece.move(row, col)
-                currentPiece = None
-            else: #No piece selected, selecting piece
-                currentPiece = board.get_piece(row, col)
-                if currentPiece != None:
+            # print(board.board[row][col].name())
+            # print(row, col)
+            board.print_board()
+            if current_piece != None:  # There is already a piece selected
+                current_piece.move(row, col)
+                current_piece = None
+            else:  # No piece selected, selecting piece
+                current_piece = board.get_piece(row, col)
+                if current_piece != None:
                     print("Piece!")
-                    currentPiece.select()
+                    current_piece.select()
 
     board.render()
 
