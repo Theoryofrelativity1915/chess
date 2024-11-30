@@ -54,6 +54,7 @@ class Pawn(Piece):
         super().__init__(canvas, row, col, color, image)
 
     def select(self):  # Highlights possible moves
+        print("Pawn selected")
         py.draw.rect(self.canvas, BLUE, (self.row * SQUARE_SIZE,
                                          (self.col + 1) *
                                          SQUARE_SIZE, SQUARE_SIZE,
@@ -63,10 +64,11 @@ class Pawn(Piece):
                                          SQUARE_SIZE, SQUARE_SIZE,
                                          SQUARE_SIZE))
 
-    def move(self, row, col):  # Moves piece to designated square if possible
+    def move(self, row, col, bd):  # Moves piece to designated square if possible
+        opponent = None
         if self.row == 7 or 1:  # Checks if pawn is in starting position
             if row == self.row + 1 or self.row + 2:
-                opponent = board.Board.get_piece(row, col)
+                opponent = board.Board.get_piece(bd, row, col)
                 if opponent != None:
                     opponent.delete()
                 self.row = row
@@ -86,6 +88,9 @@ class Pawn(Piece):
     # offset to be in the center of the square.
     def render(self):
         self.canvas.blit(self.image, self.pos)
+        
+    def name(self):
+        print("Pawn")
 
 
 class Rook(Piece):
@@ -147,6 +152,9 @@ class Rook(Piece):
 
     def render(self):
         self.canvas.blit(self.image, self.pos)
+        
+    def name(self):
+        print("Rook")
 
 
 class Knight(Piece):
@@ -230,6 +238,9 @@ class Bishop(Piece):
 
     def render(self):
         self.canvas.blit(self.image, self.pos)
+        
+    def name(self):
+        print("Knight")
 
 
 class Queen(Piece):
@@ -248,6 +259,9 @@ class Queen(Piece):
 
     def render(self):
         self.canvas.blit(self.image, self.pos)
+        
+    def name(self):
+        print("Queen")
 
 
 class King(Piece):
@@ -266,3 +280,6 @@ class King(Piece):
 
     def render(self):
         self.canvas.blit(self.image, self.pos)
+        
+    def name(self):
+        print("King")
