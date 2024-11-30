@@ -375,8 +375,56 @@ class King(Piece):
             image = black_king_image
         super().__init__(canvas, row, col, color, image)
 
-    def move(self):
-        pass
+    def is_adjacent_to_other_king(self, row, col, bd):
+        for r in range(-1, 2):
+            for c in range(-1, 2):
+                if r == 0 and c == 0:
+                    continue
+                adjacent_row = row + r
+                adjacent_col = col + c
+                if 0 <= adjacent_row <= 7 and 0 <= adjacent_col <= 7:
+                    piece = bd.get_piece(adjacent_row, adjacent_col)
+                    if piece is not None and piece.color != self.color and isinstance(piece, King):
+                        return True
+        return False
+
+    def select(self):
+        print("King selected")
+        py.draw.rect(self.canvas, BLUE, (self.row * SQUARE_SIZE,
+                                         (self.col + 1) *
+                                         SQUARE_SIZE, SQUARE_SIZE,
+                                         SQUARE_SIZE))
+        py.draw.rect(self.canvas, BLUE, (self.row * SQUARE_SIZE,
+                                         (self.col + 2) *
+                                         SQUARE_SIZE, SQUARE_SIZE,
+                                         SQUARE_SIZE))
+        
+    def move(self, row, col, bd):
+
+        if (row > 7 or row < 0 or col > 7 or col < 0) or (self.row == row and self.col == col):
+            return
+        
+        opponent = bd.get_piece(row, col)
+
+        if opponent is not None and opponent.color == self.color:
+            print("Occupied by a teammate")
+            return
+
+        if abs(self.row - row) <= 1 and abs(self.col - col) <= 1:
+            if self.is_adjacent_to_other_king(row, col, bd):
+                print("Invalid move: Kings must remain at least one space apart.")
+                return
+            bd.board[row][col] = self
+            bd.board[self.row][self.col] = None
+            self.row = row
+            self.col = col
+            self.pos = (self.col * SQUARE_SIZE + self.render_offset,
+                    self.row * SQUARE_SIZE + self.render_offset * 2)
+            
+            if opponent is not None:
+                opponent.delete()
+        else:
+            print("Invalid move for the King.")
 
     def delete(self):
         pass
