@@ -133,16 +133,17 @@ class Rook(Piece):
         super().__init__(canvas, row, col, color, image)
 
     def is_valid_move_for_rook(self, row, col):
-        if self.row == row ^ self.col == col:
+        if (self.row == row) ^ (self.col == col):
             return True            
         return False
 
     def move(self, row, col, bd):  # Moves piece to designated square if possible
-        print("Rook selected")
+        #print("Rook selected")
         opponent = None
         if self.is_valid_move_for_rook(row, col):
+           #print("valid move for rook")
             if self.row is not row:
-                print("Rook moving up/down")
+                #print("Rook moving up/down")
                 count = self.row
                 while count <= row:
                     opponent = bd.get_piece(count, col)
@@ -150,7 +151,7 @@ class Rook(Piece):
                         break
                     count += 1
             else:
-                print("Rook moving left/right")
+                #print("Rook moving left/right")
                 count = self.col
                 while count <= col:
                     opponent = bd.get_piece(row, count)
@@ -159,13 +160,15 @@ class Rook(Piece):
                     count += 1
             if opponent is not None:
                 if self.color is not opponent.color:
-                    print("Rook taking opponent")
+                    #print("Rook taking opponent")
                     bd.board[opponent.row][opponent.col] = self
                     #print(bd.board[row][col])
                     bd.board[self.row][self.col] = None
                     #print(bd.board[self.row][self.col])
                     self.row = opponent.row
                     self.col = opponent.col
+                    self.pos = (self.col * SQUARE_SIZE + self.render_offset,
+                                self.row * SQUARE_SIZE + self.render_offset * 2)
                     opponent.delete()
                 else: #If opponent is same team
                     if self.row is not row:
@@ -175,6 +178,8 @@ class Rook(Piece):
                         #print(bd.board[self.row][self.col])
                         self.row = opponent.row - 1
                         self.col = opponent.col
+                        self.pos = (self.col * SQUARE_SIZE + self.render_offset,
+                                    self.row * SQUARE_SIZE + self.render_offset * 2)
                     else:
                         bd.board[opponent.row][opponent.col - 1] = self
                         #print(bd.board[row][col])
@@ -182,6 +187,8 @@ class Rook(Piece):
                         #print(bd.board[self.row][self.col])
                         self.row = opponent.row
                         self.col = opponent.col - 1
+                        self.pos = (self.col * SQUARE_SIZE + self.render_offset,
+                                    self.row * SQUARE_SIZE + self.render_offset * 2)
             else:
                 bd.board[row][col] = self
                 #print(bd.board[row][col])
@@ -189,6 +196,8 @@ class Rook(Piece):
                 #print(bd.board[self.row][self.col])
                 self.row = row
                 self.col = col
+                self.pos = (self.col * SQUARE_SIZE + self.render_offset,
+                            self.row * SQUARE_SIZE + self.render_offset * 2)
                 
                 
 
