@@ -28,6 +28,10 @@ def wait_and_move_piece(current_piece):
                 return None
 
 
+def restart():
+    return Board()
+
+
 while running:
     # poll for events
     # py.QUIT event means the user clicked X to close your window
@@ -36,15 +40,18 @@ while running:
         if event.type == py.QUIT:
             running = False
         elif event.type == py.MOUSEBUTTONDOWN:
+            if board.game_over:
+                x, y = py.mouse.get_pos()
+                if (200 <= x <= 380 and 400 <= y <= 480):
+                    board = restart()
+                elif (400 <= x <= 580 and 400 <= y <= 480):
+                    running = False
             [row, col] = get_user_input()
             if 0 <= row <= 7 and 0 <= col <= 7:
                 current_piece = board.get_piece(row, col)
             if current_piece is not None:
-                # print("Piece selected!")
-                current_piece.select()
-                # board.print_board()
                 current_piece = wait_and_move_piece(current_piece)
-    board.render()
+    board.render(py.mouse.get_pos())
     # flip() the display to put your work on screen
     py.display.flip()
 

@@ -1,7 +1,7 @@
 # Contains the entire board class
 import pygame as py
 import pieces
-from constants import BOARD_HEIGHT, BOARD_WIDTH, ROWS, COLS, WHITE, BLACK, MINT, GREEN, SQUARE_SIZE
+from constants import BOARD_HEIGHT, BOARD_WIDTH, ROWS, COLS, WHITE, BLACK, MINT, GREEN, SQUARE_SIZE, RED, BLUE
 
 
 class Board:
@@ -16,19 +16,40 @@ class Board:
             [None for j in range(4)] for i in range(4)]
         self.removed_black_pieces = [
             [None for j in range(4)] for i in range(4)]
-        # for i in range(len(self.removed_black_pieces)):
-        #     for j in range(len(self.removed_black_pieces[0])):
-        #         self.removed_white_pieces[i][j] = pieces.Pawn(
-        #             self.canvas, 0, 0, WHITE)
-        #         self.removed_black_pieces[i][j] = pieces.Pawn( self.canvas, 0, 0, BLACK)
-        # self.remove_piece_to_side_of_board(piece=piece)
+        self.game_over = False
 
-    def render(self):
+    def render_game_over_text(self, x, y):
+        game_over_font = py.font.Font(None, 124)
+        text_font = py.font.Font(None, 54)
+        game_over_text = game_over_font.render(
+            "Game over", True, (10, 10, 10))
+        restart_text = text_font.render(
+            "Restart?", True, (10, 10, 10))
+        exit_text = text_font.render(
+            "Exit?", True, (10, 10, 10))
+        self.canvas.blit(game_over_text, (150, 300))
+        self.canvas.blit(restart_text, (215, 425))
+        self.canvas.blit(exit_text, (445, 425))
+        py.draw.rect(self.canvas, BLACK,
+                     (200, 400, 180, 80), 5, border_radius=1)
+        py.draw.rect(self.canvas, BLACK,
+                     (400, 400, 180, 80), 5, border_radius=1)
+
+    def remove_piece(self, row, col):
+        if row < 0 or row > 7 or col < 0 or col > 7:
+            return
+        piece = self.get_piece(row, col)
+        if piece is not None:
+            self.remove_piece_to_side_of_board(piece)
+
+    def render(self, mouse_pos):
         self.canvas.fill(MINT)
         self.draw_squares()
         self.draw_board_outline()
         self.render_pieces()
         self.render_removed_pieces()
+        if self.game_over:
+            self.render_game_over_text(mouse_pos[0], mouse_pos[1])
 
     def draw_board_outline(self):
         py.draw.rect(self.canvas, BLACK,
@@ -48,6 +69,16 @@ class Board:
                 py.draw.rect(self.canvas, GREEN, (i * SQUARE_SIZE,
                                                   j * SQUARE_SIZE, SQUARE_SIZE,
                                                   SQUARE_SIZE))
+
+    def invalid_king_move(self, row, col, color_of_king):
+        for r in range(8):
+            for c in range(8):
+                piece = self.get_piece(r, c)
+                if piece is not None:
+                    if ((row, col) in piece.check_positions
+                            and piece.color != color_of_king):
+                        return True
+        return False
 
     def init_board_and_pieces(self):
         board = [[None for _ in range(8)] for _ in range(8)]
@@ -69,6 +100,7 @@ class Board:
         return board
 
     # Given a row and column, return the correct piece.
+
     def init_piece_by_pos(self, row, col):
         if row == 0:
             color = BLACK
@@ -120,17 +152,20 @@ class Board:
     def remove_piece_to_side_of_board(self, piece):
         color = piece.color
         if color == WHITE:
-            self.remove_piece_to_side_of_board(
+            self.remove_piece_to_side_of_board_helper(
                 self.removed_white_pieces, piece)
         else:
-            self.remove_piece_to_side_of_board(
+            self.remove_piece_to_side_of_board_helper(
                 self.removed_black_pieces, piece)
 
     def remove_piece_to_side_of_board_helper(self, removed_pieces, piece):
         for row in range(len(removed_pieces)):
             for col in range(len(removed_pieces[0])):
-                if removed_pieces[row][col] is not None:
+                if removed_pieces[row][col] is None:
                     removed_pieces[row][col] = piece
+                    if piece is not None and piece.name == "King":
+                        self.game_over = True
+                    return
 
     def print_board(self):
         for i in range(len(self.board)):
