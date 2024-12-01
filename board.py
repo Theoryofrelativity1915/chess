@@ -5,6 +5,7 @@ from constants import BOARD_HEIGHT, BOARD_WIDTH, ROWS, COLS, WHITE, BLACK, MINT,
 
 
 class Board:
+    turn = 0
     def __init__(self):
         self.rows = ROWS
         self.cols = COLS

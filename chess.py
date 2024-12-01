@@ -1,6 +1,7 @@
 # Contains the main game loop
 import pygame as py
 from board import Board
+from constants import BLACK, WHITE
 
 
 # py setup
@@ -8,7 +9,6 @@ py.init()
 board = Board()
 clock = py.time.Clock()
 running = True
-
 
 def get_user_input():
     x, y = py.mouse.get_pos()
@@ -18,14 +18,33 @@ def get_user_input():
 
 
 def wait_and_move_piece(current_piece):
-    while current_piece is not None:  # There is already a piece selected
-        for event in py.event.get():
-            if event.type == py.QUIT:
-                exit(1)
-            elif event.type == py.MOUSEBUTTONDOWN:
-                [row, col] = get_user_input()
-                current_piece.move(row, col, board)
-                return None
+    if board.turn % 2 == 0:
+        while current_piece is not None:  # There is already a piece selected
+            for event in py.event.get():
+                if event.type == py.QUIT:
+                    exit(1)
+                elif event.type == py.MOUSEBUTTONDOWN:
+                    if current_piece.color == WHITE:
+                        [row, col] = get_user_input()
+                        current_piece.move(row, col, board)
+                        board.turn += 1
+                        return None
+                    else:
+                        return None
+    else:
+        while current_piece is not None:  # There is already a piece selected
+            for event in py.event.get():
+                if event.type == py.QUIT:
+                    exit(1)
+                elif event.type == py.MOUSEBUTTONDOWN:
+                    if current_piece.color == BLACK:
+                        [row, col] = get_user_input()
+                        current_piece.move(row, col, board)
+                        board.turn += 1
+                        return None
+                    else:
+                        return None
+
 
 
 def restart():
