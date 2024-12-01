@@ -1,7 +1,7 @@
 # Contains the entire board class
 import pygame as py
 import pieces
-from constants import BOARD_HEIGHT, BOARD_WIDTH, ROWS, COLS, WHITE, BLACK, MINT, GREEN, SQUARE_SIZE
+from constants import BOARD_HEIGHT, BOARD_WIDTH, ROWS, COLS, WHITE, BLACK, MINT, GREEN, SQUARE_SIZE, RED, BLUE
 
 
 class Board:
@@ -17,18 +17,23 @@ class Board:
         self.removed_black_pieces = [
             [None for j in range(4)] for i in range(4)]
         self.game_over = False
-        # for i in range(len(self.removed_black_pieces)):
-        #     for j in range(len(self.removed_black_pieces[0])):
-        #         self.removed_white_pieces[i][j] = pieces.Pawn(
-        #             self.canvas, 0, 0, WHITE)
-        #         self.removed_black_pieces[i][j] = pieces.Pawn( self.canvas, 0, 0, BLACK)
-        # self.remove_piece_to_side_of_board(piece=piece)
 
-    def render_game_over_text(self):
-        font = py.font.Font(None, 124)
-        text = font.render(
+    def render_game_over_text(self, x, y):
+        game_over_font = py.font.Font(None, 124)
+        text_font = py.font.Font(None, 54)
+        game_over_text = game_over_font.render(
             "Game over", True, (10, 10, 10))
-        self.canvas.blit(text, (150, 300))
+        restart_text = text_font.render(
+            "Restart?", True, (10, 10, 10))
+        exit_text = text_font.render(
+            "Exit?", True, (10, 10, 10))
+        self.canvas.blit(game_over_text, (150, 300))
+        self.canvas.blit(restart_text, (215, 425))
+        self.canvas.blit(exit_text, (445, 425))
+        py.draw.rect(self.canvas, BLACK,
+                     (200, 400, 180, 80), 5, border_radius=1)
+        py.draw.rect(self.canvas, BLACK,
+                     (400, 400, 180, 80), 5, border_radius=1)
 
     def remove_piece(self, row, col):
         if row < 0 or row > 7 or col < 0 or col > 7:
@@ -37,14 +42,14 @@ class Board:
         if piece is not None:
             self.remove_piece_to_side_of_board(piece)
 
-    def render(self):
+    def render(self, mouse_pos):
         self.canvas.fill(MINT)
         self.draw_squares()
         self.draw_board_outline()
         self.render_pieces()
         self.render_removed_pieces()
         if self.game_over:
-            self.render_game_over_text()
+            self.render_game_over_text(mouse_pos[0], mouse_pos[1])
 
     def draw_board_outline(self):
         py.draw.rect(self.canvas, BLACK,
