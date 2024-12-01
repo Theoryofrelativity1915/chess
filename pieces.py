@@ -110,6 +110,9 @@ class Pawn(Piece):
             self.add_pawn_check_positions()
             self.pos = (self.col * SQUARE_SIZE + self.render_offset,
                         self.row * SQUARE_SIZE + self.render_offset * 2)
+        if (self.row == 0 and self.color == WHITE or self.row == 7 and self.color == BLACK):
+            new_piece = Queen(self.canvas, self.row, self.col, self.color)
+            bd.board[row][col] = new_piece
 
     def add_pawn_check_positions(self):
         if self.color == WHITE:
@@ -123,6 +126,9 @@ class Pawn(Piece):
     # offset to be in the center of the square.
     def render(self):
         self.canvas.blit(self.image, self.pos)
+
+    def delete(self):
+        pass
 
     def name(self):
         print("Pawn")
