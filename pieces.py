@@ -44,6 +44,7 @@ class Piece:
         self.pos = (self.col * SQUARE_SIZE + self.render_offset,
                     self.row * SQUARE_SIZE + self.render_offset * 2)
         self.check_positions = set()
+        self.name = None
 
 
 class Pawn(Piece):
@@ -53,6 +54,7 @@ class Pawn(Piece):
         else:
             image = black_pawn_image
         super().__init__(canvas, row, col, color, image)
+        self.add_pawn_check_positions()
 
     def select(self):  # Highlights possible moves
         print("Pawn selected")
@@ -102,7 +104,7 @@ class Pawn(Piece):
             selected_col_valid = True
         # If both the row they want to go and the col they want to go is valid, then let them and kill whatever is there.
         if selected_col_valid and selected_row_valid:
-            self.check_positions.clear()
+            bd.remove_piece(row, col)
             bd.board[row][col] = self
             bd.board[self.row][self.col] = None
             self.row = row
@@ -115,6 +117,7 @@ class Pawn(Piece):
             bd.board[row][col] = new_piece
 
     def add_pawn_check_positions(self):
+        self.check_positions.clear()
         if self.color == WHITE:
             self.check_positions.add((self.row - 1, self.col + 1))
             self.check_positions.add((self.row - 1, self.col - 1))
@@ -180,7 +183,7 @@ class Rook(Piece):
                     self.col = opponent.col
                     self.pos = (self.col * SQUARE_SIZE + self.render_offset,
                                 self.row * SQUARE_SIZE + self.render_offset * 2)
-                    opponent.delete()
+
                 else:  # If opponent is same team
                     if self.row is not row:
                         bd.board[opponent.row - 1][opponent.col] = self
@@ -243,13 +246,14 @@ class Knight(Piece):
             opponent = bd.get_piece(row, col)
             if opponent is not None:
                 if opponent.color is not self.color:
+                    bd.remove_piece(row, col)
                     bd.board[row][col] = self
                     bd.board[self.row][self.col] = None
                     self.row = row
                     self.col = col
                     self.pos = (self.col * SQUARE_SIZE + self.render_offset,
                                 self.row * SQUARE_SIZE + self.render_offset * 2)
-                    opponent.delete()
+
             else:
                 bd.board[row][col] = self
                 # print(bd.board[row][col])
@@ -262,6 +266,7 @@ class Knight(Piece):
             self.add_knight_check_positions(bd)
 
     def add_knight_check_positions(self, board):
+        self.check_positions.clear()
         self.check_positions.add((self.row - 2, self.col - 1))
         self.check_positions.add((self.row - 2, self.col + 1))
         self.check_positions.add((self.row + 2, self.col - 1))
@@ -330,14 +335,15 @@ class Bishop(Piece):
         self.moves.clear()
         self.get_moves(board, self.moves)
         if (row, col) in self.moves:
-            self.check_positions.clear()
-            self.add_bishop_check_positions(board)
+            board.remove_piece(row, col)
             board.board[row][col] = self
             board.board[self.row][self.col] = None
             self.row = row
             self.col = col
             self.pos = (self.col * SQUARE_SIZE + self.render_offset,
                         self.row * SQUARE_SIZE + self.render_offset * 2)
+            self.check_positions.clear()
+            self.add_bishop_check_positions(board)
 
     def add_bishop_check_positions(self, board):
         self.get_moves(board, self.check_positions)
@@ -380,6 +386,7 @@ class King(Piece):
         else:
             image = black_king_image
         super().__init__(canvas, row, col, color, image)
+        self.name = "King"
 
     def is_adjacent_to_other_king(self, row, col, bd):
         for r in range(-1, 2):
@@ -395,7 +402,6 @@ class King(Piece):
         return False
 
     def select(self):
-        print("King selected")
         py.draw.rect(self.canvas, BLUE, (self.row * SQUARE_SIZE,
                                          (self.col + 1) *
                                          SQUARE_SIZE, SQUARE_SIZE,
@@ -404,12 +410,12 @@ class King(Piece):
                                          (self.col + 2) *
                                          SQUARE_SIZE, SQUARE_SIZE,
                                          SQUARE_SIZE))
-        
-    def move(self, row, col, bd):
 
+    def move(self, row, col, bd):
         if (row > 7 or row < 0 or col > 7 or col < 0) or (self.row == row and self.col == col):
             return
-        
+        if (bd.invalid_king_move(row, col, self.color)):
+            return
         opponent = bd.get_piece(row, col)
 
         if opponent is not None and opponent.color == self.color:
@@ -425,10 +431,7 @@ class King(Piece):
             self.row = row
             self.col = col
             self.pos = (self.col * SQUARE_SIZE + self.render_offset,
-                    self.row * SQUARE_SIZE + self.render_offset * 2)
-            
-            if opponent is not None:
-                opponent.delete()
+                        self.row * SQUARE_SIZE + self.render_offset * 2)
         else:
             print("Invalid move for the King.")
 
