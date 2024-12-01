@@ -326,15 +326,14 @@ class Bishop(Piece):
         self.moves.clear()
         self.get_moves(board, self.moves)
         if (row, col) in self.moves:
-            self.check_positions.clear()
-            self.add_bishop_check_positions(board)
-            print(self.check_positions)
             board.board[row][col] = self
             board.board[self.row][self.col] = None
             self.row = row
             self.col = col
             self.pos = (self.col * SQUARE_SIZE + self.render_offset,
                         self.row * SQUARE_SIZE + self.render_offset * 2)
+            self.check_positions.clear()
+            self.add_bishop_check_positions(board)
 
     def add_bishop_check_positions(self, board):
         self.get_moves(board, self.check_positions)
