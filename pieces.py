@@ -150,78 +150,125 @@ class Rook(Piece):
         if (self.row == row) ^ (self.col == col):
             return True
         return False
+    
+    def rook_movement(self, row, col, bd):
+        moved = False
+        distancer = row - self.row
+        distancec = col - self.col
+        x = 1
+        if row != self.row and distancer < 0: #Going up
+            while x <= abs(row - self.row):
+                opponent = bd.get_piece((self.row - x), col)
+                if opponent is not None and opponent.color is not self.color:
+                    bd.board[opponent.row][opponent.col] = self
+                    bd.board[self.row][self.col] = None
+                    self.row = opponent.row
+                    self.col = opponent.col
+                    self.pos = (self.col * SQUARE_SIZE + self.render_offset,
+                                self.row * SQUARE_SIZE + self.render_offset * 2)
+                    bd.remove_piece_to_side_of_board(opponent)
+                    moved = True
+                    break
+                elif opponent is not None and opponent.color is self.color:
+                    moved = True
+                    break
+                x += 1
+            if moved == False:
+                bd.board[row][col] = self
+                bd.board[self.row][self.col] = None
+                self.row = row
+                self.col = col
+                self.pos = (self.col * SQUARE_SIZE + self.render_offset,
+                            self.row * SQUARE_SIZE + self.render_offset * 2)
+        elif row != self.row and distancer > 0: #Going down
+            while x <= abs(row - self.row):
+                opponent = bd.get_piece((self.row + x), col)
+                if opponent is not None and opponent.color is not self.color:
+                    bd.board[opponent.row][opponent.col] = self
+                    bd.board[self.row][self.col] = None
+                    self.row = opponent.row
+                    self.col = opponent.col
+                    self.pos = (self.col * SQUARE_SIZE + self.render_offset,
+                                self.row * SQUARE_SIZE + self.render_offset * 2)
+                    bd.remove_piece_to_side_of_board(opponent)
+                    moved = True
+                    break
+                elif opponent is not None and opponent.color is self.color:
+                    moved = True
+                    break
+                x += 1
+            if moved == False:
+                bd.board[row][col] = self
+                bd.board[self.row][self.col] = None
+                self.row = row
+                self.col = col
+                self.pos = (self.col * SQUARE_SIZE + self.render_offset,
+                            self.row * SQUARE_SIZE + self.render_offset * 2)
+        elif col != self.col and distancec < 0: #Going right
+            while x <= abs(col - self.col):
+                opponent = bd.get_piece(row, (self.col - x))
+                if opponent is not None and opponent.color is not self.color:
+                    bd.board[opponent.row][opponent.col] = self
+                    bd.board[self.row][self.col] = None
+                    self.row = opponent.row
+                    self.col = opponent.col
+                    self.pos = (self.col * SQUARE_SIZE + self.render_offset,
+                                self.row * SQUARE_SIZE + self.render_offset * 2)
+                    bd.remove_piece_to_side_of_board(opponent)
+                    moved = True
+                    break
+                elif opponent is not None and opponent.color is self.color:
+                    moved = True
+                    break
+                x += 1
+            if moved == False:
+                bd.board[row][col] = self
+                bd.board[self.row][self.col] = None
+                self.row = row
+                self.col = col
+                self.pos = (self.col * SQUARE_SIZE + self.render_offset,
+                            self.row * SQUARE_SIZE + self.render_offset * 2)
+        elif col != self.col and distancec > 0: #Going left
+            while x <= abs(col - self.col):
+                opponent = bd.get_piece(row, (self.col + x))
+                if opponent is not None and opponent.color is not self.color:
+                    bd.board[opponent.row][opponent.col] = self
+                    bd.board[self.row][self.col] = None
+                    self.row = opponent.row
+                    self.col = opponent.col
+                    self.pos = (self.col * SQUARE_SIZE + self.render_offset,
+                                self.row * SQUARE_SIZE + self.render_offset * 2)
+                    bd.remove_piece_to_side_of_board(opponent)
+                    moved = True
+                    break
+                elif opponent is not None and opponent.color is self.color:
+                    moved = True
+                    break
+                x += 1
+            if moved == False:
+                bd.board[row][col] = self
+                bd.board[self.row][self.col] = None
+                self.row = row
+                self.col = col
+                self.pos = (self.col * SQUARE_SIZE + self.render_offset,
+                            self.row * SQUARE_SIZE + self.render_offset * 2)
 
     def move(self, row, col, bd):  # Moves piece to designated square if possible
         # print("Rook selected")
         opponent = None
         if self.is_valid_move_for_rook(row, col):
            # print("valid move for rook")
-            if self.row is not row:
-                # print("Rook moving up/down")
-                count = self.row
-                while count <= row:
-                    opponent = bd.get_piece(count, col)
-                    if opponent is not None:
-                        break
-                    count += 1
-            else:
-                # print("Rook moving left/right")
-                count = self.col
-                while count <= col:
-                    opponent = bd.get_piece(row, count)
-                    if opponent is not None:
-                        break
-                    count += 1
-            if opponent is not None:
-                if self.color is not opponent.color:
-                    # print("Rook taking opponent")
-                    bd.board[opponent.row][opponent.col] = self
-                    # print(bd.board[row][col])
-                    bd.board[self.row][self.col] = None
-                    # print(bd.board[self.row][self.col])
-                    self.row = opponent.row
-                    self.col = opponent.col
-                    self.pos = (self.col * SQUARE_SIZE + self.render_offset,
-                                self.row * SQUARE_SIZE + self.render_offset * 2)
+           self.rook_movement(row, col, bd)
 
-                else:  # If opponent is same team
-                    if self.row is not row:
-                        bd.board[opponent.row - 1][opponent.col] = self
-                        # print(bd.board[row][col])
-                        bd.board[self.row][self.col] = None
-                        # print(bd.board[self.row][self.col])
-                        self.row = opponent.row - 1
-                        self.col = opponent.col
-                        self.pos = (self.col * SQUARE_SIZE + self.render_offset,
-                                    self.row * SQUARE_SIZE + self.render_offset * 2)
-                    else:
-                        bd.board[opponent.row][opponent.col - 1] = self
-                        # print(bd.board[row][col])
-                        bd.board[self.row][self.col] = None
-                        # print(bd.board[self.row][self.col])
-                        self.row = opponent.row
-                        self.col = opponent.col - 1
-                        self.pos = (self.col * SQUARE_SIZE + self.render_offset,
-                                    self.row * SQUARE_SIZE + self.render_offset * 2)
-            else:
-                bd.board[row][col] = self
-                # print(bd.board[row][col])
-                bd.board[self.row][self.col] = None
-                # print(bd.board[self.row][self.col])
-                self.row = row
-                self.col = col
-                self.pos = (self.col * SQUARE_SIZE + self.render_offset,
-                            self.row * SQUARE_SIZE + self.render_offset * 2)
 
     def delete(self):
         pass
 
     def render(self):
         self.canvas.blit(self.image, self.pos)
-
+        
     def name(self):
         print("Rook")
-
 
 class Knight(Piece):
     def __init__(self, canvas, row, col, color):
@@ -276,8 +323,6 @@ class Knight(Piece):
         self.check_positions.add((self.row + 1, self.col - 2))
         self.check_positions.add((self.row + 1, self.col + 2))
 
-    def delete(self):
-        pass
 
     def render(self):
         self.canvas.blit(self.image, self.pos)
@@ -366,11 +411,76 @@ class Queen(Piece):
             image = black_queen_image
         super().__init__(canvas, row, col, color, image)
 
-    def move(self):
-        pass
+class Queen(Piece):
+    def __init__(self, canvas, row, col, color):
+        if (color == WHITE):
+            image = white_queen_image
+        else:
+            image = black_queen_image
+        super().__init__(canvas, row, col, color, image)
+        self.moves = set()
+        self.visited = set()
+        
+    def using_rook(self, row, col):
+        if (self.row == row) ^ (self.col == col):
+            return True
+        return False
+    
+    def check_bounds(self, row, col):
+        if (row < 0 or
+            row > 7 or
+            col < 0 or
+                col > 7):
+            return False
+        else:
+            return True
 
-    def delete(self):
-        pass
+    def iterate_all_diagonal_directions(self, valid_positions, row, col, row_iterator, col_iterator, board):
+        row += row_iterator
+        col += col_iterator
+        while self.check_bounds(row, col):
+            piece = board.get_piece(row, col)
+            if piece is None:
+                valid_positions.add((row, col))
+                row += row_iterator
+                col += col_iterator
+            elif piece.color == self.color:
+                return
+            else:
+                valid_positions.add((row, col))
+                return
+
+    def get_moves(self, board, positions):
+        row, col = self.row, self.col
+        self.iterate_all_diagonal_directions(
+            positions, row, col, -1, -1, board)  # up and left
+        self.iterate_all_diagonal_directions(
+            positions, row, col, -1, +1, board)  # up and right
+        self.iterate_all_diagonal_directions(
+            positions, row, col, +1, +1, board)  # down and right
+        self.iterate_all_diagonal_directions(
+            positions, row, col, +1, -1, board)  # down and left
+
+    def move(self, row, col, bd):
+        if self.using_rook(row, col):
+            Rook.rook_movement(self, row, col, bd)
+        elif self.col != col and self.row != row:
+            self.visited.clear()
+            self.moves.clear()
+            self.get_moves(bd, self.moves)
+            if (row, col) in self.moves:
+                bd.remove_piece(row, col)
+                bd.board[row][col] = self
+                bd.board[self.row][self.col] = None
+                self.row = row
+                self.col = col
+                self.pos = (self.col * SQUARE_SIZE + self.render_offset,
+                            self.row * SQUARE_SIZE + self.render_offset * 2)
+                self.check_positions.clear()
+                self.add_queen_check_positions(bd)
+
+    def add_queen_check_positions(self, board):
+        self.get_moves(board, self.check_positions)
 
     def render(self):
         self.canvas.blit(self.image, self.pos)
@@ -440,6 +550,9 @@ class King(Piece):
 
     def render(self):
         self.canvas.blit(self.image, self.pos)
+
+    def name(self):
+        print("King")
 
     def name(self):
         print("King")
