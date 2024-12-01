@@ -103,6 +103,7 @@ class Pawn(Piece):
             selected_col_valid = True
         # If both the row they want to go and the col they want to go is valid, then let them and kill whatever is there.
         if selected_col_valid and selected_row_valid:
+            bd.remove_piece(row, col)
             bd.board[row][col] = self
             bd.board[self.row][self.col] = None
             self.row = row
@@ -238,6 +239,7 @@ class Knight(Piece):
             opponent = bd.get_piece(row, col)
             if opponent is not None:
                 if opponent.color is not self.color:
+                    bd.remove_piece(row, col)
                     bd.board[row][col] = self
                     bd.board[self.row][self.col] = None
                     self.row = row
@@ -326,6 +328,7 @@ class Bishop(Piece):
         self.moves.clear()
         self.get_moves(board, self.moves)
         if (row, col) in self.moves:
+            board.remove_piece(row, col)
             board.board[row][col] = self
             board.board[self.row][self.col] = None
             self.row = row

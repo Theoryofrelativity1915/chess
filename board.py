@@ -23,6 +23,14 @@ class Board:
         #         self.removed_black_pieces[i][j] = pieces.Pawn( self.canvas, 0, 0, BLACK)
         # self.remove_piece_to_side_of_board(piece=piece)
 
+    def remove_piece(self, row, col):
+        if row < 0 or row > 7 or col < 0 or col > 7:
+            return
+        piece = self.get_piece(row, col)
+        if piece is not None:
+            self.remove_piece_to_side_of_board(piece)
+            print(self.removed_black_pieces)
+
     def render(self):
         self.canvas.fill(MINT)
         self.draw_squares()
@@ -54,8 +62,8 @@ class Board:
             for c in range(8):
                 piece = self.get_piece(r, c)
                 if piece is not None:
-                    if ((row, col) in piece.check_positions 
-                        and piece.color != color_of_king):
+                    if ((row, col) in piece.check_positions
+                            and piece.color != color_of_king):
                         return True
         return False
 
@@ -79,6 +87,7 @@ class Board:
         return board
 
     # Given a row and column, return the correct piece.
+
     def init_piece_by_pos(self, row, col):
         if row == 0:
             color = BLACK
@@ -130,17 +139,18 @@ class Board:
     def remove_piece_to_side_of_board(self, piece):
         color = piece.color
         if color == WHITE:
-            self.remove_piece_to_side_of_board(
+            self.remove_piece_to_side_of_board_helper(
                 self.removed_white_pieces, piece)
         else:
-            self.remove_piece_to_side_of_board(
+            self.remove_piece_to_side_of_board_helper(
                 self.removed_black_pieces, piece)
 
     def remove_piece_to_side_of_board_helper(self, removed_pieces, piece):
         for row in range(len(removed_pieces)):
             for col in range(len(removed_pieces[0])):
-                if removed_pieces[row][col] is not None:
+                if removed_pieces[row][col] is None:
                     removed_pieces[row][col] = piece
+                    return
 
     def print_board(self):
         for i in range(len(self.board)):
