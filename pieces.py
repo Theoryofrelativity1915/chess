@@ -150,72 +150,116 @@ class Rook(Piece):
         opponent = None
         if self.is_valid_move_for_rook(row, col):
            # print("valid move for rook")
-            if self.row is not row:
-                # print("Rook moving up/down")
-                count = self.row
-                while count <= row:
-                    opponent = bd.get_piece(count, col)
-                    if opponent is not None:
-                        break
-                    count += 1
-            else:
-                # print("Rook moving left/right")
-                count = self.col
-                while count <= col:
-                    opponent = bd.get_piece(row, count)
-                    if opponent is not None:
-                        break
-                    count += 1
-            if opponent is not None:
-                if self.color is not opponent.color:
-                    # print("Rook taking opponent")
-                    bd.board[opponent.row][opponent.col] = self
-                    # print(bd.board[row][col])
-                    bd.board[self.row][self.col] = None
-                    # print(bd.board[self.row][self.col])
-                    self.row = opponent.row
-                    self.col = opponent.col
-                    self.pos = (self.col * SQUARE_SIZE + self.render_offset,
-                                self.row * SQUARE_SIZE + self.render_offset * 2)
+           moved = False
+           distancer = row - self.row
+           distancec = col - self.col
+           x = 1
+           if row != self.row and distancer < 0: #Going up
+               while x <= abs(row - self.row):
+                   opponent = bd.get_piece((self.row - x), col)
+                   if opponent is not None and opponent.color is not self.color:
+                       bd.board[opponent.row][opponent.col] = self
+                       bd.board[self.row][self.col] = None
+                       self.row = opponent.row
+                       self.col = opponent.col
+                       self.pos = (self.col * SQUARE_SIZE + self.render_offset,
+                                   self.row * SQUARE_SIZE + self.render_offset * 2)
+                       opponent.delete()
+                       moved = True
+                       break
+                   elif opponent is not None and opponent.color is self.color:
+                       moved = True
+                       break
+                   x += 1
+               if moved == False:
+                   bd.board[row][col] = self
+                   bd.board[self.row][self.col] = None
+                   self.row = row
+                   self.col = col
+                   self.pos = (self.col * SQUARE_SIZE + self.render_offset,
+                               self.row * SQUARE_SIZE + self.render_offset * 2)
+           elif row != self.row and distancer > 0: #Going down
+               while x <= abs(row - self.row):
+                   opponent = bd.get_piece((self.row + x), col)
+                   if opponent is not None and opponent.color is not self.color:
+                       bd.board[opponent.row][opponent.col] = self
+                       bd.board[self.row][self.col] = None
+                       self.row = opponent.row
+                       self.col = opponent.col
+                       self.pos = (self.col * SQUARE_SIZE + self.render_offset,
+                                   self.row * SQUARE_SIZE + self.render_offset * 2)
+                       opponent.delete()
+                       moved = True
+                       break
+                   elif opponent is not None and opponent.color is self.color:
+                       moved = True
+                       break
+                   x += 1
+               if moved == False:
+                   bd.board[row][col] = self
+                   bd.board[self.row][self.col] = None
+                   self.row = row
+                   self.col = col
+                   self.pos = (self.col * SQUARE_SIZE + self.render_offset,
+                               self.row * SQUARE_SIZE + self.render_offset * 2)
+           elif col != self.col and distancec < 0: #Going right
+               while x <= abs(col - self.col):
+                   opponent = bd.get_piece(row, (self.col - x))
+                   if opponent is not None and opponent.color is not self.color:
+                       bd.board[opponent.row][opponent.col] = self
+                       bd.board[self.row][self.col] = None
+                       self.row = opponent.row
+                       self.col = opponent.col
+                       self.pos = (self.col * SQUARE_SIZE + self.render_offset,
+                                   self.row * SQUARE_SIZE + self.render_offset * 2)
+                       opponent.delete()
+                       moved = True
+                       break
+                   elif opponent is not None and opponent.color is self.color:
+                       moved = True
+                       break
+                   x += 1
+               if moved == False:
+                   bd.board[row][col] = self
+                   bd.board[self.row][self.col] = None
+                   self.row = row
+                   self.col = col
+                   self.pos = (self.col * SQUARE_SIZE + self.render_offset,
+                               self.row * SQUARE_SIZE + self.render_offset * 2)
+           elif col != self.col and distancec > 0: #Going left
+               while x <= abs(col - self.col):
+                   opponent = bd.get_piece(row, (self.col + x))
+                   if opponent is not None and opponent.color is not self.color:
+                       bd.board[opponent.row][opponent.col] = self
+                       bd.board[self.row][self.col] = None
+                       self.row = opponent.row
+                       self.col = opponent.col
+                       self.pos = (self.col * SQUARE_SIZE + self.render_offset,
+                                   self.row * SQUARE_SIZE + self.render_offset * 2)
+                       opponent.delete()
+                       moved = True
+                       break
+                   elif opponent is not None and opponent.color is self.color:
+                       moved = True
+                       break
+                   x += 1
+               if moved == False:
+                   bd.board[row][col] = self
+                   bd.board[self.row][self.col] = None
+                   self.row = row
+                   self.col = col
+                   self.pos = (self.col * SQUARE_SIZE + self.render_offset,
+                               self.row * SQUARE_SIZE + self.render_offset * 2)
 
-                else:  # If opponent is same team
-                    if self.row is not row:
-                        bd.board[opponent.row - 1][opponent.col] = self
-                        # print(bd.board[row][col])
-                        bd.board[self.row][self.col] = None
-                        # print(bd.board[self.row][self.col])
-                        self.row = opponent.row - 1
-                        self.col = opponent.col
-                        self.pos = (self.col * SQUARE_SIZE + self.render_offset,
-                                    self.row * SQUARE_SIZE + self.render_offset * 2)
-                    else:
-                        bd.board[opponent.row][opponent.col - 1] = self
-                        # print(bd.board[row][col])
-                        bd.board[self.row][self.col] = None
-                        # print(bd.board[self.row][self.col])
-                        self.row = opponent.row
-                        self.col = opponent.col - 1
-                        self.pos = (self.col * SQUARE_SIZE + self.render_offset,
-                                    self.row * SQUARE_SIZE + self.render_offset * 2)
-            else:
-                bd.board[row][col] = self
-                # print(bd.board[row][col])
-                bd.board[self.row][self.col] = None
-                # print(bd.board[self.row][self.col])
-                self.row = row
-                self.col = col
-                self.pos = (self.col * SQUARE_SIZE + self.render_offset,
-                            self.row * SQUARE_SIZE + self.render_offset * 2)
 
     def delete(self):
         pass
 
     def render(self):
         self.canvas.blit(self.image, self.pos)
-
+        
     def name(self):
         print("Rook")
-
 
 class Knight(Piece):
     def __init__(self, canvas, row, col, color):
