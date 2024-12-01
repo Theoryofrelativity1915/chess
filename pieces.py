@@ -404,8 +404,70 @@ class Queen(Piece):
             image = black_queen_image
         super().__init__(canvas, row, col, color, image)
 
-    def move(self):
-        pass
+    class Queen(Piece):
+    def __init__(self, canvas, row, col, color):
+        if (color == WHITE):
+            image = white_queen_image
+        else:
+            image = black_queen_image
+        super().__init__(canvas, row, col, color, image)
+        self.moves = set()
+        self.visited = set()
+        
+    def using_rook(self, row, col):
+        if (self.row == row) ^ (self.col == col):
+            return True
+        return False
+    
+    def iterate_all_diagonal_directions(self, row, col, row_iterator, col_iterator, board):
+        row += row_iterator
+        col += col_iterator
+        while self.check_bounds(row, col):
+            piece = board.get_piece(row, col)
+            if piece is None:
+                self.moves.add((row, col))
+                row += row_iterator
+                col += col_iterator
+            elif piece.color == self.color:
+                return
+            else:
+                self.moves.add((row, col))
+                return
+            
+    def check_bounds(self, row, col):
+        if (row < 0 or
+            row > 7 or
+            col < 0 or
+                col > 7):
+            return False
+        else:
+            return True
+        
+    def get_moves(self, board):
+        row, col = self.row, self.col
+        self.iterate_all_diagonal_directions(
+            row, col, -1, -1, board)  # up and left
+        self.iterate_all_diagonal_directions(
+            row, col, -1, +1, board)  # up and right
+        self.iterate_all_diagonal_directions(
+            row, col, +1, +1, board)  # down and right
+        self.iterate_all_diagonal_directions(
+            row, col, +1, -1, board)  # down and left
+
+    def move(self, row, col, bd):
+        if self.using_rook(row, col):
+            Rook.rook_movement(self, row, col, bd)
+        elif self.col != col and self.row != row:
+            self.visited.clear()
+            self.moves.clear()
+            self.get_moves(bd)
+            if (row, col) in self.moves:
+                bd.board[row][col] = self
+                bd.board[self.row][self.col] = None
+                self.row = row
+                self.col = col
+                self.pos = (self.col * SQUARE_SIZE + self.render_offset,
+                            self.row * SQUARE_SIZE + self.render_offset * 2)
 
     def delete(self):
         pass
