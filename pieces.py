@@ -103,7 +103,6 @@ class Pawn(Piece):
             selected_col_valid = True
         # If both the row they want to go and the col they want to go is valid, then let them and kill whatever is there.
         if selected_col_valid and selected_row_valid:
-            self.check_positions.clear()
             bd.board[row][col] = self
             bd.board[self.row][self.col] = None
             self.row = row
@@ -113,6 +112,7 @@ class Pawn(Piece):
                         self.row * SQUARE_SIZE + self.render_offset * 2)
 
     def add_pawn_check_positions(self):
+        self.check_positions.clear()
         if self.color == WHITE:
             self.check_positions.add((self.row - 1, self.col + 1))
             self.check_positions.add((self.row - 1, self.col - 1))
@@ -257,6 +257,7 @@ class Knight(Piece):
             self.add_knight_check_positions(bd)
 
     def add_knight_check_positions(self, board):
+        self.check_positions.clear()
         self.check_positions.add((self.row - 2, self.col - 1))
         self.check_positions.add((self.row - 2, self.col + 1))
         self.check_positions.add((self.row + 2, self.col - 1))
@@ -327,6 +328,7 @@ class Bishop(Piece):
         if (row, col) in self.moves:
             self.check_positions.clear()
             self.add_bishop_check_positions(board)
+            print(self.check_positions)
             board.board[row][col] = self
             board.board[self.row][self.col] = None
             self.row = row
