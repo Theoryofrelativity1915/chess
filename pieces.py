@@ -44,6 +44,7 @@ class Piece:
         self.pos = (self.col * SQUARE_SIZE + self.render_offset,
                     self.row * SQUARE_SIZE + self.render_offset * 2)
         self.check_positions = set()
+        self.name = None
 
 
 class Pawn(Piece):
@@ -379,6 +380,7 @@ class King(Piece):
         else:
             image = black_king_image
         super().__init__(canvas, row, col, color, image)
+        self.name = "King"
 
     def is_adjacent_to_other_king(self, row, col, bd):
         for r in range(-1, 2):

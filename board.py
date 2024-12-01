@@ -16,6 +16,7 @@ class Board:
             [None for j in range(4)] for i in range(4)]
         self.removed_black_pieces = [
             [None for j in range(4)] for i in range(4)]
+        self.game_over = False
         # for i in range(len(self.removed_black_pieces)):
         #     for j in range(len(self.removed_black_pieces[0])):
         #         self.removed_white_pieces[i][j] = pieces.Pawn(
@@ -23,13 +24,18 @@ class Board:
         #         self.removed_black_pieces[i][j] = pieces.Pawn( self.canvas, 0, 0, BLACK)
         # self.remove_piece_to_side_of_board(piece=piece)
 
+    def render_game_over_text(self):
+        font = py.font.Font(None, 124)
+        text = font.render(
+            "Game over", True, (10, 10, 10))
+        self.canvas.blit(text, (150, 300))
+
     def remove_piece(self, row, col):
         if row < 0 or row > 7 or col < 0 or col > 7:
             return
         piece = self.get_piece(row, col)
         if piece is not None:
             self.remove_piece_to_side_of_board(piece)
-            print(self.removed_black_pieces)
 
     def render(self):
         self.canvas.fill(MINT)
@@ -37,6 +43,8 @@ class Board:
         self.draw_board_outline()
         self.render_pieces()
         self.render_removed_pieces()
+        if self.game_over:
+            self.render_game_over_text()
 
     def draw_board_outline(self):
         py.draw.rect(self.canvas, BLACK,
@@ -150,6 +158,8 @@ class Board:
             for col in range(len(removed_pieces[0])):
                 if removed_pieces[row][col] is None:
                     removed_pieces[row][col] = piece
+                    if piece is not None and piece.name == "King":
+                        self.game_over = True
                     return
 
     def print_board(self):

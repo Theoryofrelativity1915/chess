@@ -40,9 +40,6 @@ while running:
             if 0 <= row <= 7 and 0 <= col <= 7:
                 current_piece = board.get_piece(row, col)
             if current_piece is not None:
-                # print("Piece selected!")
-                # current_piece.select()
-                # board.print_board()
                 current_piece = wait_and_move_piece(current_piece)
     board.render()
     # flip() the display to put your work on screen
